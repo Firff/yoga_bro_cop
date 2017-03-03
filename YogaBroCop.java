@@ -42,8 +42,8 @@ public class YogaBroCop extends AdvancedRobot
 	double absoluteEnemyBearing = enemyBearing + selfHeading;
 	double enemyCompensatedVelocity = enemyVelocity * Math.sin(enemyHeading - absoluteEnemyBearing);
 
-	double enemyX = getX() + enemyDistance * Math.sin(absoluteEnemyBearing);
-	double enemyY = getY() + enemyDistance * Math.cos(absoluteEnemyBearing);
+	double enemyX = selfX + enemyDistance * Math.sin(absoluteEnemyBearing);
+	double enemyY = selfY + enemyDistance * Math.cos(absoluteEnemyBearing);
 	
 	double predictedX = enemyX;
 	double predictedY = enemyY;
@@ -56,24 +56,19 @@ public class YogaBroCop extends AdvancedRobot
 	setTurnRadarLeftRadians(getRadarTurnRemainingRadians());
 
 	if(enemyDistance > 300) {
-	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(theta - selfGunHeading + enemyCompensatedVelocity/10); 
-	    setTurnGunRightRadians(gunTurnAngle);
-	    setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfHeading));
-	    setAhead((enemyDistance - 60) * moveDirection);
+	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(theta - selfGunHeading + enemyCompensatedVelocity/17); 
 	    setFire(1);
 	} else 	if(enemyDistance > 100) {
-	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(theta - selfGunHeading + enemyCompensatedVelocity/10); 
-	    setTurnGunRightRadians(gunTurnAngle);
-	    setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfHeading));
-	    setAhead((enemyDistance - 60) * moveDirection);
-	    setFire(1);
+	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(theta - selfGunHeading + enemyCompensatedVelocity/17);
+	    setFire(2);
 	} else {
-	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(theta - selfGunHeading + enemyCompensatedVelocity/10);
-	    setTurnGunRightRadians(gunTurnAngle);
-	    setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfHeading));
-	    setAhead((enemyDistance - 60) * moveDirection);
+	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(theta - selfGunHeading + enemyCompensatedVelocity/9);
 	    setFire(3);
 	}
+	
+    setTurnGunRightRadians(gunTurnAngle);
+    setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfHeading));
+    setAhead((enemyDistance - 60) * moveDirection);
 
 	out.println("Bearing = "+enemyBearing);
 	out.println("Distace = "+enemyDistance);
@@ -91,8 +86,10 @@ public class YogaBroCop extends AdvancedRobot
     public void onHitByBullet(HitByBulletEvent e) {
 	// Implement detection of how to run and maybe try to circle the enemy
 	// Replace the next line with any behavior you would like
-	setTurnLeftRadians(1.8);
-	ahead(60*moveDirection);
+	setTurnLeftRadians(3);
+	ahead(160*moveDirection);
+	setTurnRightRadians(3.6);
+	setAhead(160*moveDirection);
     }
     
     /**
