@@ -1,4 +1,4 @@
-package ge.rtb.YOGABROCO;
+package ge.rtb;
 import robocode.*;
 import java.awt.Color;
 
@@ -32,35 +32,45 @@ public class YogaBroCop extends AdvancedRobot
 	double enemyHeading = e.getHeadingRadians();
 	double enemyVelocity = e.getVelocity();
 
+
 	double selfGunHeading = getGunHeadingRadians();
 	double selfHeading = getHeadingRadians();
+	double selfVelocity = getVelocity();
+	double selfX = getX();
+	double selfY = getY();
 
 	double absoluteEnemyBearing = enemyBearing + selfHeading;
-	double enemyCompensatedVelocity = enemyVelocity * Math.sin(enemyHeading - absoluteEnemyBearing); // Verify this calculation
+	double enemyCompensatedVelocity = enemyVelocity * Math.sin(enemyHeading - absoluteEnemyBearing);
 
+	double enemyX = getX() + enemyDistance * Math.sin(absoluteEnemyBearing);
+	double enemyY = getY() + enemyDistance * Math.cos(absoluteEnemyBearing);
+	
+	double predictedX = enemyX;
+	double predictedY = enemyY;
+	
+	predictedX += Math.sin(enemyHeading) * (enemyVelocity+1.8);
+	predictedY += Math.cos(enemyHeading) * (enemyVelocity+1.8);
+	
+	double theta = robocode.util.Utils.normalAbsoluteAngle(Math.atan2(predictedX - selfX, predictedY - selfY));
+	
 	setTurnRadarLeftRadians(getRadarTurnRemainingRadians());
 
-	// Add velocity change???? Test cases with or without
-	//if(Math.random() >.9){
-	//    setMaxVelocity((12*Math.random())+12);
-	//}
-
 	if(enemyDistance > 300) {
-	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfGunHeading + enemyCompensatedVelocity/50); //Chech this 22 value, alongside with the enemycompensated variable, it looks strange
+	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(theta - selfGunHeading + enemyCompensatedVelocity/10); 
 	    setTurnGunRightRadians(gunTurnAngle);
-	    setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfHeading + enemyCompensatedVelocity/getVelocity()));
+	    setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfHeading));
 	    setAhead((enemyDistance - 60) * moveDirection);
 	    setFire(1);
 	} else 	if(enemyDistance > 100) {
-	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfGunHeading + enemyCompensatedVelocity/30); //Chech this 22 value, alongside with the enemycompensated variable, it looks strange
+	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(theta - selfGunHeading + enemyCompensatedVelocity/10); 
 	    setTurnGunRightRadians(gunTurnAngle);
-	    setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfHeading + enemyCompensatedVelocity/getVelocity()));
+	    setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfHeading));
 	    setAhead((enemyDistance - 60) * moveDirection);
 	    setFire(1);
 	} else {
-	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfGunHeading + enemyCompensatedVelocity/15); //Chech this 22 value, alongside with the enemycompensated variable, it looks strange
+	    gunTurnAngle = robocode.util.Utils.normalRelativeAngle(theta - selfGunHeading + enemyCompensatedVelocity/10);
 	    setTurnGunRightRadians(gunTurnAngle);
-	    setTurnLeftRadians(robocode.util.Utils.normalRelativeAngle(Math.PI/2 - enemyBearing));
+	    setTurnRightRadians(robocode.util.Utils.normalRelativeAngle(absoluteEnemyBearing - selfHeading));
 	    setAhead((enemyDistance - 60) * moveDirection);
 	    setFire(3);
 	}
@@ -71,6 +81,7 @@ public class YogaBroCop extends AdvancedRobot
 	out.println("Velocity = "+enemyVelocity);
 	out.println("Gun Heading = "+selfGunHeading);
 	out.println("My Heading = "+selfHeading);
+	out.println("My Velocity = "+selfVelocity);
 	
     }
     
